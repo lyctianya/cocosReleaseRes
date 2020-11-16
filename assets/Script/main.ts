@@ -19,6 +19,13 @@ const imgLists: Array<string> = [
   "textures/img6",
 ];
 
+const urlLists: Array<string> = [
+  "//cdn.51talk.com/apollo/images/369851e8d136792ff517cc1bb3632c1e.jpg",
+  "//cdn.51talk.com/apollo/images/4bebbc2b88cfc4c8e040b2eb9d9fb27b.jpg",
+  "//cdn.51talk.com/apollo/images/1fedf73076abee678bc32d606e213fd4.jpg",
+  "//cdn.51talk.com/apollo/images/afa768033434d3ae4c5af7c64f15d63b.jpg",
+];
+
 const prefabLists: Array<string> = [
   "prefab/prefab1",
   "prefab/prefab2",
@@ -29,6 +36,7 @@ const prefabLists: Array<string> = [
 const listInfo = [
   { name: "图片", type: 0 },
   { name: "预制", type: 1 },
+  { name: "url", type: 2 },
 ];
 
 @ccclass
@@ -89,7 +97,24 @@ export default class NewClass extends cc.Component {
         node.path = url;
         console.log("add image");
       });
-    } else {
+    } else if (this.curMode == 2) {
+      const url = urlLists[this.curIndex++ % urlLists.length];
+      cc.loader.load({ url, type: "image" }, (e, tex) => {
+        if (e) {
+          console.log("error?");
+          return;
+        }
+        let node = new cc.Node();
+        node.addComponent(cc.Sprite);
+        node.getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(tex);
+        node.width = 200;
+        node.height = 100;
+        this.content.addChild(node);
+        this.addTouchListener(node);
+        node.path = url;
+        console.log("add image");
+      });
+    } else if (this.curIndex == 1) {
       const url = prefabLists[this.curIndex++ % prefabLists.length];
       cc.loader.loadRes(url, (e, prefab) => {
         if (e) {
@@ -106,13 +131,21 @@ export default class NewClass extends cc.Component {
   removeItem() {
     if (this.selectItem) {
       this.selectItem.destroy();
-      if(this.curMode===0){
-        const dep = cc.loader.getDependsRecursively(this.selectItem.getComponent(cc.Sprite).spriteFrame);
-        console.log("dep",dep);
+      if (this.curMode === 0) {
+        const dep = cc.loader.getDependsRecursively(
+          this.selectItem.getComponent(cc.Sprite).spriteFrame
+        );
+        console.log("dep", dep);
         cc.loader.release(dep);
-      }else{
+      } else if (this.curMode === 1) {
         const dep = cc.loader.getDependsRecursively(this.selectItem.path);
-        console.log("dep",dep);
+        console.log("dep", dep);
+        cc.loader.release(dep);
+      } else if (this.curMode === 2) {
+        const dep = cc.loader.getDependsRecursively(
+          this.selectItem.path
+        );
+        console.log("dep", dep);
         cc.loader.release(dep);
       }
       this.selectItem = null;
