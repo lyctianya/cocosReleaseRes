@@ -27,6 +27,8 @@ const urlLists: Array<string> = [
 ];
 
 const prefabLists: Array<string> = [
+  "prefab/spine",
+  "prefab/dragon",
   "prefab/prefab1",
   "prefab/prefab2",
   "prefab/prefab3",
@@ -37,6 +39,8 @@ const listInfo = [
   { name: "图片", type: 0 },
   { name: "预制", type: 1 },
   { name: "url", type: 2 },
+  { name: "dragon", type: 3 },
+  { name: "spine", type: 4 },
 ];
 
 @ccclass
@@ -53,6 +57,12 @@ export default class NewClass extends cc.Component {
   @property(cc.Node)
   content: cc.Node = null;
 
+  @property(cc.Node)
+  dragonNode: cc.Node = null;
+
+  @property(cc.Node)
+  spineNode: cc.Node = null;
+
   private selectItem: cc.Node = null;
   private curMode: number = 0;
   private curIndex = 0;
@@ -64,7 +74,7 @@ export default class NewClass extends cc.Component {
       cnode.getChildByName("lb").getComponent(cc.Label).string = info.name;
       this.list.node.addChild(cnode);
       cnode.on(cc.Node.EventType.TOUCH_END, () => {
-        console.log("点到我了",cnode.type);
+        console.log("点到我了", cnode.type);
         this.curMode = cnode.type;
       });
     });
@@ -116,7 +126,6 @@ export default class NewClass extends cc.Component {
         console.log("add image");
       });
     } else if (this.curMode == 1) {
-      console.log("预制。。。");
       const url = prefabLists[this.curIndex++ % prefabLists.length];
       cc.loader.loadRes(url, (e, prefab) => {
         if (e) {
@@ -124,11 +133,32 @@ export default class NewClass extends cc.Component {
           return;
         }
         const node = cc.instantiate(prefab);
-        console.log("秒？？");
         this.content.addChild(node);
         this.addTouchListener(node);
         node.path = url;
       });
+    } else if (this.curMode === 3) {
+      const node = cc.instantiate(this.dragonNode);
+      node.active = true;
+      this.content.addChild(node);
+      this.addTouchListener(node);
+    } else if (this.curMode === 4) {
+      cc.loader.loadRes(
+        "ani/spineboy/spineboy.json",
+        sp.SkeletonData,
+        (e, sdata) => {
+          if (e) {
+            console.log("error spine");
+            return;
+          }
+          const node = cc.instantiate(this.spineNode);
+          const spine = node.getChildByName("ani").getComponent(sp.Skeleton);
+          spine.skeletonData = sdata;
+          node.active = true;
+          this.content.addChild(node);
+          this.addTouchListener(node);
+        }
+      );
     }
   }
 
@@ -146,12 +176,27 @@ export default class NewClass extends cc.Component {
         console.log("dep", dep);
         cc.loader.release(dep);
       } else if (this.curMode === 2) {
+        const dep = cc.loader.getDependsRecursively(this.selectItem.path);
+        console.log("dep", dep);
+        cc.loader.release(dep);
+      } else if (this.curMode === 3) {
         const dep = cc.loader.getDependsRecursively(
-          this.selectItem.path
+          this.selectItem.getChildByName("ani")
         );
         console.log("dep", dep);
         cc.loader.release(dep);
+      } else if (this.curMode === 4) {
+        const spine = this.selectItem
+          .getChildByName("ani")
+          .getComponent(sp.Skeleton);
+        const dep = cc.loader.getDependsRecursively(spine.skeletonData);
+        console.log("dep2", dep2);
+        cc.loader.release(dep);
+        const dep2 = cc.loader.getDependsRecursively(spine.getMaterial(0));
+        console.log("dep2", dep2);
+        cc.loader.release(dep2);
       }
+
       this.selectItem = null;
     }
   }
