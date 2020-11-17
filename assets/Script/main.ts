@@ -64,6 +64,7 @@ export default class NewClass extends cc.Component {
       cnode.getChildByName("lb").getComponent(cc.Label).string = info.name;
       this.list.node.addChild(cnode);
       cnode.on(cc.Node.EventType.TOUCH_END, () => {
+        console.log("点到我了",cnode.type);
         this.curMode = cnode.type;
       });
     });
@@ -99,7 +100,7 @@ export default class NewClass extends cc.Component {
       });
     } else if (this.curMode == 2) {
       const url = urlLists[this.curIndex++ % urlLists.length];
-      cc.loader.load({ url, type: "image" }, (e, tex) => {
+      cc.loader.load({ url, type: "jpg" }, (e, tex) => {
         if (e) {
           console.log("error?");
           return;
@@ -114,13 +115,16 @@ export default class NewClass extends cc.Component {
         node.path = url;
         console.log("add image");
       });
-    } else if (this.curIndex == 1) {
+    } else if (this.curMode == 1) {
+      console.log("预制。。。");
       const url = prefabLists[this.curIndex++ % prefabLists.length];
       cc.loader.loadRes(url, (e, prefab) => {
         if (e) {
+          console.log("错了。。。。。。");
           return;
         }
         const node = cc.instantiate(prefab);
+        console.log("秒？？");
         this.content.addChild(node);
         this.addTouchListener(node);
         node.path = url;
