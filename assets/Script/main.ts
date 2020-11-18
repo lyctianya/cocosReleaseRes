@@ -138,10 +138,54 @@ export default class NewClass extends cc.Component {
         node.path = url;
       });
     } else if (this.curMode === 3) {
-      const node = cc.instantiate(this.dragonNode);
-      node.active = true;
-      this.content.addChild(node);
-      this.addTouchListener(node);
+      cc.loader.loadRes(
+        "ani/dragonBones2/texture.png",
+        cc.Texture2D,
+        (e, texture) => {
+          cc.loader.loadRes(
+            "ani/dragonBones2/NewDragonTest.txt",
+            (e, assetJson) => {
+              if (e) {
+                console.log("error spine");
+                return;
+              }
+              cc.loader.loadRes(
+                "ani/dragonBones2/texture.txt",
+                (e, altJson) => {
+                  if (e) {
+                    console.log("error spine");
+                    return;
+                  }
+                  const node = new cc.Node();
+                  node.width = 200;
+                  node.height = 200;
+                  node.active = true;
+                  this.content.addChild(node);
+                  this.addTouchListener(node);
+                  node.addComponent(dragonBones.ArmatureDisplay);
+                  const dragon = node.getComponent(dragonBones.ArmatureDisplay);
+
+                  var atlas = new dragonBones.DragonBonesAtlasAsset();
+                  atlas._uuid = "ani/dragonBones2/texture.txt"
+                  atlas.atlasJson = altJson;
+                  atlas.texture = texture;
+
+                  var dasset = new dragonBones.DragonBonesAsset();
+
+                  dasset.dragonBonesJson = assetJson;
+                  dasset._uuid = "ani/dragonBones2/NewDragonTest.txt"
+
+                  dragon.dragonAtlasAsset = atlas;
+                  dragon.dragonAsset = dasset;
+                  dragon.armatureName = "armatureName";
+
+                  dragon.playAnimation("stand", 0);
+                }
+              );
+            }
+          );
+        }
+      );
     } else if (this.curMode === 4) {
       cc.loader.loadRes(
         "ani/spineboy/spineboy.json",
@@ -180,17 +224,26 @@ export default class NewClass extends cc.Component {
         console.log("dep", dep);
         cc.loader.release(dep);
       } else if (this.curMode === 3) {
-        const dep = cc.loader.getDependsRecursively(
-          this.selectItem.getChildByName("ani")
+        const dragon = this.selectItem.getComponent(
+          dragonBones.ArmatureDisplay
         );
+        const dep = cc.loader.getDependsRecursively(dragon.dragonAtlasAsset);
         console.log("dep", dep);
         cc.loader.release(dep);
+
+        const dep3 = cc.loader.getDependsRecursively(dragon.dragonAsset);
+        console.log("dep2", dep3);
+        cc.loader.release(dep3);
+
+        const dep2 = cc.loader.getDependsRecursively(dragon.getMaterial(0));
+        console.log("dep2", dep2);
+        cc.loader.release(dep2);
       } else if (this.curMode === 4) {
         const spine = this.selectItem
           .getChildByName("ani")
           .getComponent(sp.Skeleton);
         const dep = cc.loader.getDependsRecursively(spine.skeletonData);
-        console.log("dep2", dep2);
+        console.log("dep", dep);
         cc.loader.release(dep);
         const dep2 = cc.loader.getDependsRecursively(spine.getMaterial(0));
         console.log("dep2", dep2);
