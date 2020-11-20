@@ -1,0 +1,19 @@
+{
+  "name": "export-assets",
+  "version": "0.0.1",
+  "description": "一次导出多个资源",
+  "author": "lyctianya@163.com",
+  "main": "main.js",
+  "main-menu": {
+    "Packages/资源导出": {
+      "message": "export-assets:open"
+    }
+  },
+    "panel": {
+    "main": "panel/index.js",
+    "type": "dockable",
+    "title": "多资源导出",
+    "width": 400,
+    "height": 300
+  }
+}

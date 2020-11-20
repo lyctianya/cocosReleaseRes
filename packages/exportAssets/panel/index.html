@@ -1,0 +1,11 @@
+<div id="app">
+  <h2>多资源导出</h2>
+  <div>
+    <span>请选取文件:</span>
+    <input type="file" multiple="multiple" @change="selecteFiles($event)" />
+    <button @click="showDepences()">获取依赖文件</button>
+    <div v-if="files.length>0">
+      <span v-for="item in files"> {{item}}</span>
+    </div>
+  </div>
+</div>

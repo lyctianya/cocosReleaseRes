@@ -1742,7 +1742,7 @@
     },
     "component": "",
     "_componentId": "858abXpz5dEI7c4dLrdHy3s",
-    "handler": "showUUid",
+    "handler": "showInfo",
     "customEventData": ""
   },
   {

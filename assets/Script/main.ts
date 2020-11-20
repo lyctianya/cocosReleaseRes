@@ -166,14 +166,14 @@ export default class NewClass extends cc.Component {
                   const dragon = node.getComponent(dragonBones.ArmatureDisplay);
 
                   var atlas = new dragonBones.DragonBonesAtlasAsset();
-                  atlas._uuid = "ani/dragonBones2/texture.txt"
+                  atlas._uuid = "ani/dragonBones2/texture.txt";
                   atlas.atlasJson = altJson;
                   atlas.texture = texture;
 
                   var dasset = new dragonBones.DragonBonesAsset();
 
                   dasset.dragonBonesJson = assetJson;
-                  dasset._uuid = "ani/dragonBones2/NewDragonTest.txt"
+                  dasset._uuid = "ani/dragonBones2/NewDragonTest.txt";
 
                   dragon.dragonAtlasAsset = atlas;
                   dragon.dragonAsset = dasset;
@@ -206,12 +206,23 @@ export default class NewClass extends cc.Component {
     }
   }
 
+  showInfo() {
+    const arr = this.list.getComponents(cc.Component);
+
+    for (let k in arr[0]) {
+      console.log(k);
+      if (typeof arr[0][k] === "string") {
+        console.log("----",arr[0][k]);
+      }
+    }
+  }
+
   removeItem() {
     if (this.selectItem) {
       this.selectItem.destroy();
       if (this.curMode === 0) {
         const dep = cc.loader.getDependsRecursively(
-          this.selectItem.getComponent(cc.Sprite).spriteFrame
+          this.selectItem.getComponent(cc.Sprite)
         );
         console.log("dep", dep);
         cc.loader.release(dep);
@@ -254,5 +265,8 @@ export default class NewClass extends cc.Component {
     }
   }
 
-  // update (dt) {}
+  onEnable(){
+    this.node.active = false;
+  }
+
 }
