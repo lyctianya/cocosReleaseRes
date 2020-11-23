@@ -101,10 +101,10 @@ export default class NewClass extends cc.Component {
         let node = new cc.Node();
         node.addComponent(cc.Sprite);
         node.getComponent(cc.Sprite).spriteFrame = sp;
-        node.width = 200;
-        node.height = 100;
         this.content.addChild(node);
         this.addTouchListener(node);
+        node.width = 200;
+        node.height = 100;
         node.path = url;
         console.log("add image");
       });
@@ -222,7 +222,7 @@ export default class NewClass extends cc.Component {
       this.selectItem.destroy();
       if (this.curMode === 0) {
         const dep = cc.loader.getDependsRecursively(
-          this.selectItem.getComponent(cc.Sprite)
+          this.selectItem.getComponent(cc.Sprite).spriteFrame
         );
         console.log("dep", dep);
         cc.loader.release(dep);
