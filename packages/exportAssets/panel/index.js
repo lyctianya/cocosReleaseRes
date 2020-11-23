@@ -40,7 +40,7 @@ var createVM = function (elem) {
           .replace(/\\/g, "/");
       },
 
-      async query(func, params) {
+      query(func, params) {
         return new Promise((resolve, reject) => {
           func(params, (e, ret) => {
             if (e) {
@@ -82,12 +82,17 @@ var createVM = function (elem) {
             await this.query(Editor.assetdb.queryUrlByUuid.bind(this), ret[i])
           );
         }
-        return urls;
+        return new Promise((resolve) => {
+          resolve(urls);
+        });
       },
-      showDepences() {
+      async showDepences() {
         let ret = [];
-        for (let v of this.files) {
-          Editor.log(this.getDependAssets(this.fspathToUrl(v)));
+        for (let i = 0; i < this.files.length; i++) {
+          Editor.log("dddddddddddd");
+          const aaa = await this.getDependAssets(this.fspathToUrl(v));
+          Editor.log("ssss");
+          Editor.log(aaa);
         }
       },
     },

@@ -264,9 +264,4 @@ export default class NewClass extends cc.Component {
       this.selectItem = null;
     }
   }
-
-  onEnable(){
-    this.node.active = false;
-  }
-
 }
